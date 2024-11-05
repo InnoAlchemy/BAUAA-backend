@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Database Control Panel</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      input,
+      textarea {
+        display: block;
+        margin: 10px 0;
+        padding: 8px;
+        width: 300px;
+      }
+      button {
+        padding: 10px 15px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Database Control Panel</h1>
+
+    <!-- Banner Form -->
+    <h2>Add Banner</h2>
+    <form id="bannerForm" enctype="multipart/form-data">
+      <input type="text" placeholder="Title" id="bannerTitle" required />
+      <textarea
+        placeholder="Description"
+        id="bannerDescription"
+        required
+      ></textarea>
+      <input type="file" id="bannerImage" accept="image/*" required />
+      <button type="submit">Add Banner</button>
+    </form>
+
+    <!-- Member Form -->
+    <h2>Add Member</h2>
+    <form id="memberForm" enctype="multipart/form-data">
+      <input type="text" placeholder="Title" id="memberTitle" required />
+      <input type="text" placeholder="Position" id="memberPosition" required />
+      <textarea
+        placeholder="Description"
+        id="memberDescription"
+        required
+      ></textarea>
+      <input type="file" id="memberImage" accept="image/*" required />
+      <button type="submit">Add Member</button>
+    </form>
+
+    <!-- Event Form -->
+    <h2>Add Event</h2>
+    <form id="eventForm" enctype="multipart/form-data">
+      <input type="text" placeholder="Event Name" id="eventName" required />
+      <input type="text" placeholder="Date" id="eventDate" required />
+      <textarea
+        placeholder="Description"
+        id="eventDescription"
+        required
+      ></textarea>
+      <input type="file" id="eventImage" accept="image/*" required />
+      <button type="submit">Add Event</button>
+    </form>
+
+    <!-- Header Form -->
+    <!-- Updated Header Form -->
+    <h2>Add Header</h2>
+    <form id="headerForm" enctype="multipart/form-data">
+      <input type="text" placeholder="Header Title" id="headerTitle" required />
+      <textarea
+        placeholder="Description"
+        id="headerDescription"
+        required
+      ></textarea>
+      <input type="file" id="headerImage" accept="image/*" required />
+      <button type="submit">Add Header</button>
+    </form>
+
+    <!-- JavaScript to handle form submissions -->
+    <script>
+      // Banner form submission
+      document
+        .getElementById("bannerForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData();
+          formData.append(
+            "title",
+            document.getElementById("bannerTitle").value
+          );
+          formData.append(
+            "description",
+            document.getElementById("bannerDescription").value
+          );
+          formData.append(
+            "image",
+            document.getElementById("bannerImage").files[0]
+          );
+
+          try {
+            const response = await fetch("http://localhost:5000/banners", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            if (response.ok) {
+              alert("Banner added successfully!");
+            } else {
+              alert("Error adding banner: " + result.error);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Error adding banner.");
+          }
+        });
+
+      // Member form submission
+      document
+        .getElementById("memberForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData();
+          formData.append(
+            "title",
+            document.getElementById("memberTitle").value
+          );
+          formData.append(
+            "position",
+            document.getElementById("memberPosition").value
+          );
+          formData.append(
+            "description",
+            document.getElementById("memberDescription").value
+          );
+          formData.append(
+            "image",
+            document.getElementById("memberImage").files[0]
+          );
+
+          try {
+            const response = await fetch("http://localhost:5000/members", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            if (response.ok) {
+              alert("Member added successfully!");
+            } else {
+              alert("Error adding member: " + result.error);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Error adding member.");
+          }
+        });
+
+      // Event form submission
+      document
+        .getElementById("eventForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData();
+          formData.append("name", document.getElementById("eventName").value);
+          formData.append("date", document.getElementById("eventDate").value);
+          formData.append(
+            "description",
+            document.getElementById("eventDescription").value
+          );
+          formData.append(
+            "image",
+            document.getElementById("eventImage").files[0]
+          );
+
+          try {
+            const response = await fetch("http://localhost:5000/events", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            if (response.ok) {
+              alert("Event added successfully!");
+            } else {
+              alert("Error adding event: " + result.error);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Error adding event.");
+          }
+        });
+
+      // Header form submission
+      // Updated Header form submission with image handling
+      document
+        .getElementById("headerForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData();
+          formData.append(
+            "title",
+            document.getElementById("headerTitle").value
+          );
+          formData.append(
+            "description",
+            document.getElementById("headerDescription").value
+          );
+          formData.append(
+            "background_image",
+            document.getElementById("headerImage").files[0]
+          ); // Add the image file
+
+          try {
+            const response = await fetch("http://localhost:5000/headers", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            if (response.ok) {
+              alert("Header added successfully!");
+            } else {
+              alert("Error adding header: " + result.error);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Error adding header.");
+          }
+        });
+    </script>
+  </body>
+</html>
