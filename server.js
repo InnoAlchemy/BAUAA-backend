@@ -17,6 +17,11 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+const db = require("./app/models");
+db.sequelize.sync({ force: false }).then(() => {
+  console.log("Drop and re-sync db.");
+});
+
 // Setup Multer storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
