@@ -1,6 +1,6 @@
 const dbConfig = require("../config/db.config.js");
-
 const Sequelize = require("sequelize");
+
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
@@ -19,6 +19,13 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+// Import the models
 db.pageSection = require("./pageSection.model.js")(sequelize, Sequelize);
+db.benefit = require("./benefit.model.js")(sequelize, Sequelize);          // Import the Benefit model
+db.benefitPoints = require("./benefitPoints.model.js")(sequelize, Sequelize); // Import the BenefitPoints model
+
+// Define associations (if any) after importing models
+db.benefit.hasMany(db.benefitPoints, { foreignKey: 'title_id', as: 'benefitPoints' }); // One benefit has many points
+db.benefitPoints.belongsTo(db.benefit, { foreignKey: 'title_id', as: 'benefit' });   // Each point belongs to one benefit
 
 module.exports = db;

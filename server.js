@@ -56,6 +56,8 @@ app.get("/", (req, res) => {
 
 require("./app/routes/pageSection.routes")(app);
 
+require("./app/routes/benefit.routes")(app);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
