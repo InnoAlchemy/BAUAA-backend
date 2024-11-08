@@ -1,19 +1,28 @@
 const multer = require("multer");
 const path = require("path");
 
+// Helper function to sanitize API path for filenames
+const sanitizePath = (apiPath) => {
+  return apiPath.replace(/\//g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+};
+
 // Set the storage configuration for Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Set the directory where uploaded files will be stored
-    cb(null, "uploads/"); // Make sure you have this directory created in your project
+    cb(null, "uploads/"); // Make sure this directory exists
   },
   filename: (req, file, cb) => {
-    // Use the original file name and append the timestamp to avoid conflicts
-    cb(null, Date.now() + path.extname(file.originalname)); // e.g., 1600000000000.jpg
+    
+    // Get the API endpoint name from the request URL
+    const apiPath = sanitizePath(req.originalUrl);
+
+    // Use the API endpoint as a prefix in the file name, along with a timestamp
+    cb(null, `${file.fieldname}${path.extname(file.originalname)}`);
   },
 });
 
-// Filter to allow only image files (you can add more checks if needed)
+// Filter to allow only image files
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
   if (allowedTypes.includes(file.mimetype)) {
@@ -27,7 +36,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 20 * 1024 * 1024 }, // Limit file size to 5MB
+  limits: { fileSize: 20 * 1024 * 1024 }, // Limit file size to 20MB
 });
 
 module.exports = upload;

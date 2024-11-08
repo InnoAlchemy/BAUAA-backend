@@ -1,5 +1,6 @@
 const { log } = require("console");
 const db = require("../models");
+const path = require("path");
 
 const lala = db.pageSection;
 const Op = db.Sequelize.Op;
@@ -9,8 +10,9 @@ exports.update = (req, res) => {
   const { page_name } = req.params;
   const sections = req.body.sections;
 
-  console.log(req.params);
-  console.log(req.body);
+  // console.log(req.params);
+  // console.log("---------------");
+  // console.log(req.body);
 
   // Check if the page_name and sections are provided
   if (!page_name || !sections || !Array.isArray(sections)) {
@@ -19,17 +21,7 @@ exports.update = (req, res) => {
     });
   }
 
-  // Prepare an array of image URLs if files were uploaded
-  let image_urls = [];
-  if (req.files) {
-    req.files.forEach((file) => {
-      image_urls.push(`/uploads/${file.filename}`);
-    });
-  }
-
-  // Loop through each section, parse it, and update it in the database
   const updatePromises = sections.map((sectionData, index) => {
-    // Parse the sectionData if it is a JSON string
     const parsedSection =
       typeof sectionData === "string" ? JSON.parse(sectionData) : sectionData;
     const { section_name, title, description } = parsedSection;
@@ -38,9 +30,13 @@ exports.update = (req, res) => {
     const updateData = {
       title: title,
       description: description,
-      image_url: image_urls.length > 0 ? image_urls[index] : null,
+      image_url: req.files.find((file) => file.fieldname == section_name)
+        ? `/uploads/${
+            req.files.find((file) => file.fieldname == section_name).filename
+          }`
+        : null,
     };
-    console.log(updateData);
+    // console.log(updateData);
 
     return lala.update(updateData, {
       where: { page_name: page_name, section_name: section_name },
@@ -64,6 +60,40 @@ exports.update = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: `Error updating page sections: ${err.message}`,
+      });
+    });
+};
+
+exports.getAll = (req, res) => {
+  const { page_name } = req.params;
+
+  // Check if the page_name is provided
+  if (!page_name) {
+    return res.status(400).send({
+      message: "Page name is required.",
+    });
+  }
+
+  // Retrieve all sections for the given page_name
+  lala
+    .findAll({
+      where: { page_name: page_name },
+    })
+    .then((sections) => {
+      if (sections.length > 0) {
+        res.send({
+          message: "Sections retrieved successfully.",
+          data: sections,
+        });
+      } else {
+        res.send({
+          message: `No sections found for page_name=${page_name}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: `Error retrieving page sections: ${err.message}`,
       });
     });
 };

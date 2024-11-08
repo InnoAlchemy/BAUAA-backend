@@ -1,0 +1,36 @@
+// Update Benefit Points based on the title_id
+exports.addBenefitPoints = async (req, res) => {
+  const { id } = req.params;
+  const { bulletPoints } = req.body;
+
+  console.log(id);
+  console.log(bulletPoints);
+
+  try {
+    const benefit = await Benefit.findByPk(id);
+    if (!benefit) {
+      return res.status(404).send({ message: "Benefit not found" });
+    }
+
+    // Loop through each bullet point and create a new entry
+    for (const point of bulletPoints) {
+      await BenefitPoints.create({
+        title_id: id, // Associate the new point with the benefit ID
+        content: point.content, // Set the content from the request data
+      });
+    }
+
+    return res
+      .status(201)
+      .send({ message: "New bullet points added successfully" });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Error adding new bullet points",
+      error: error.message,
+    });
+  }
+};
+
+
+
+router.post("/benefit-points/:id", benefitController.addBenefitPoints);
