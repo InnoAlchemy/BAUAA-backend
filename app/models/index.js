@@ -21,11 +21,20 @@ db.sequelize = sequelize;
 
 // Import the models
 db.pageSection = require("./pageSection.model.js")(sequelize, Sequelize);
-db.benefit = require("./benefit.model.js")(sequelize, Sequelize);          // Import the Benefit model
+db.benefit = require("./benefit.model.js")(sequelize, Sequelize); // Import the Benefit model
 db.benefitPoints = require("./benefitPoints.model.js")(sequelize, Sequelize); // Import the BenefitPoints model
+db.users = require("./users.model.js")(sequelize, Sequelize);
+db.boardmembers = require("./boardmembers.model.js")(sequelize, Sequelize);
+db.partners = require("./partners.model.js")(sequelize, Sequelize);
 
 // Define associations (if any) after importing models
-db.benefit.hasMany(db.benefitPoints, { foreignKey: 'title_id', as: 'benefitPoints' }); // One benefit has many points
-db.benefitPoints.belongsTo(db.benefit, { foreignKey: 'title_id', as: 'benefit' });   // Each point belongs to one benefit
+db.benefit.hasMany(db.benefitPoints, {
+  foreignKey: "title_id",
+  as: "benefitPoints",
+}); // One benefit has many points
+db.benefitPoints.belongsTo(db.benefit, {
+  foreignKey: "title_id",
+  as: "benefit",
+}); // Each point belongs to one benefit
 
 module.exports = db;

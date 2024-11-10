@@ -1,3 +1,4 @@
+const { log } = require("console");
 const multer = require("multer");
 const path = require("path");
 
@@ -13,7 +14,6 @@ const storage = multer.diskStorage({
     cb(null, "uploads/"); // Make sure this directory exists
   },
   filename: (req, file, cb) => {
-    
     // Get the API endpoint name from the request URL
     const apiPath = sanitizePath(req.originalUrl);
 

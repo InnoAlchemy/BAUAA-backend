@@ -1,4 +1,3 @@
-const { log } = require("console");
 const db = require("../models");
 const path = require("path");
 
@@ -9,19 +8,18 @@ const upload = require("./../middlewares/multer.js"); // Import the multer confi
 exports.update = (req, res) => {
   const { page_name } = req.params;
   const sections = req.body.sections;
+  console.log(req.body.sections);
+  console.log("--------------------");
 
-  // console.log(req.params);
-  // console.log("---------------");
-  // console.log(req.body);
-
-  // Check if the page_name and sections are provided
+  // Validate inputs
   if (!page_name || !sections || !Array.isArray(sections)) {
     return res.status(400).send({
       message: "Page name and a valid sections array are required.",
     });
   }
 
-  const updatePromises = sections.map((sectionData, index) => {
+  // Map each section to an update promise
+  const updatePromises = sections.map((sectionData) => {
     const parsedSection =
       typeof sectionData === "string" ? JSON.parse(sectionData) : sectionData;
     const { section_name, title, description } = parsedSection;
@@ -30,14 +28,15 @@ exports.update = (req, res) => {
     const updateData = {
       title: title,
       description: description,
-      image_url: req.files.find((file) => file.fieldname == section_name)
-        ? `/uploads/${
-            req.files.find((file) => file.fieldname == section_name).filename
-          }`
-        : null,
     };
-    // console.log(updateData);
 
+    // Conditionally add image_url if a file is uploaded for the section
+    const file = req.files.find((file) => file.fieldname === section_name);
+    if (file) {
+      updateData.image_url = `/uploads/${file.filename}`;
+    }
+
+    // Update the database for the specified page and section name
     return lala.update(updateData, {
       where: { page_name: page_name, section_name: section_name },
     });
@@ -46,7 +45,9 @@ exports.update = (req, res) => {
   // Execute all update promises
   Promise.all(updatePromises)
     .then((results) => {
-      const updatedSections = results.filter((num) => num[0] === 1).length;
+      const updatedSections = results.filter(
+        (result) => result[0] === 1
+      ).length;
       if (updatedSections > 0) {
         res.send({
           message: `${updatedSections} section(s) updated successfully for page_name=${page_name}.`,
@@ -67,7 +68,7 @@ exports.update = (req, res) => {
 exports.getAll = (req, res) => {
   const { page_name } = req.params;
 
-  // Check if the page_name is provided
+  // Validate input
   if (!page_name) {
     return res.status(400).send({
       message: "Page name is required.",
