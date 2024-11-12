@@ -51,6 +51,8 @@ require("./app/routes/benefit.routes")(app);
 require("./app/routes/users.routes")(app);
 require("./app/routes/boardmembers.routes")(app);
 require("./app/routes/partners.routes")(app);
+require("./app/routes/inbox.routes")(app);
+require("./app/routes/events.routes")(app);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

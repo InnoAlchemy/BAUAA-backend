@@ -9,30 +9,51 @@ module.exports = (sequelize, Sequelize) => {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false, // Required field
+        allowNull: false,
       },
       address: {
         type: Sequelize.STRING,
-        allowNull: false, // Required field
+        allowNull: false,
       },
       birthday: {
         type: Sequelize.DATE,
-        allowNull: false, // Required field
+        allowNull: false,
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: false, // Required field
+        allowNull: false,
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       event_status: {
         type: Sequelize.ENUM("Joined", "Pending"),
-        allowNull: false, // Required field
+        allowNull: false,
       },
     },
     {
-      tableName: "users", // Explicitly specify the table name
-      timestamps: false, // Disable timestamps (createdAt/updatedAt)
+      tableName: "users",
+      timestamps: false,
     }
   );
+
+  // Define associations
+  User.associate = (models) => {
+    User.belongsToMany(models.Event, {
+      through: "UserEvents",
+      as: "events",
+      foreignKey: "user_id",
+    });
+  };
 
   return User;
 };
