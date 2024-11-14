@@ -35,11 +35,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      registeredUserIds: {
-        type: Sequelize.JSON,
-        allowNull: true,
-        defaultValue: [],
-      },
       totalUsers: {
         type: Sequelize.INTEGER,
         allowNull: false,
