@@ -177,6 +177,7 @@ exports.loginRequestOtp = async (req, res) => {
         success: true,
         message: "User is verified. You are logged in.",
         accessToken,
+        role: user.role,
       });
     }
 

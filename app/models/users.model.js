@@ -46,6 +46,14 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         defaultValue: false,
       },
+      role: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "user", // Default role set to 'user'
+        validate: {
+          isIn: [["user", "admin"]], // Role can only be 'user' or 'admin'
+        },
+      },
     },
     {
       tableName: "users",
